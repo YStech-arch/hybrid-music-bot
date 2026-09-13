@@ -201,16 +201,8 @@ async function startBot(sessionName) {
         const { connection, lastDisconnect, qr } = update;
 
         if (qr) {
-            const qrFile = `/tmp/yuki-${sessionName}-qr.png`;
-            QRCode.toFile(qrFile, qr, {
-                width: 800,
-                margin: 2
-            }).then(() => {
-                console.log(`\n📱 QR ${sessionName.toUpperCase()} dibuat: ${qrFile}`);
-                console.log(`Buka file tersebut untuk scan dengan WhatsApp.`);
-            }).catch(err => {
-                console.error('❌ Gagal membuat QR PNG:', err);
-            });
+            console.log(`\n📱 Scan QR ${sessionName.toUpperCase()} dengan WhatsApp:\n`);
+            qrcode.generate(qr, { small: true });
         }
 
         if (connection === 'close') {
