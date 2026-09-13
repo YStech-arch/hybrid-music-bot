@@ -439,6 +439,4 @@ if (lowerText.startsWith('vplay')) {
 
 
 startBot('wa1');
-startBot('wa2');
 
-startBot('wa3');
