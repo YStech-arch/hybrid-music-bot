@@ -1,3 +1,13 @@
+console.log(`
+__   ______   _____ _____ ____  _   _ 
+\ \ / / ___| |_   _| ____/ ___|| | | |
+ \ V /\___ \   | | |  _|| |    | |_| |
+  | |  ___) |  | | | |__| |___ |  _  |
+  |_| |____/   |_| |_____\____||_| |_|
+
+ Created by : YS Tech <ystech78@gmail.com>
+ Project    : Hybrid Music Bot
+`);
 const {
     default: makeWASocket,
     useMultiFileAuthState,
