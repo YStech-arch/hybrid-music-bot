@@ -1,3 +1,6 @@
 python-telegram-bot
 httpx
 yt-dlp
+
+pyTelegramBotAPI
+python-dotenv
