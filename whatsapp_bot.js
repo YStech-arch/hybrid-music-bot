@@ -1,3 +1,4 @@
+const fs = require("fs");
 console.log(`
 __   ______   _____ _____ ____  _   _ 
 \ \ / / ___| |_   _| ____/ ___|| | | |
@@ -17,11 +18,40 @@ const {
 const qrcode = require('qrcode-terminal');
 const QRCode = require('qrcode');
 const { spawn } = require('child_process');
-const fs = require('fs');
+
+const EC2_YT_DLP = '/home/ec2-user/yt-dlp-env/bin/yt-dlp';
+const EC2_PYTHON = '/home/ec2-user/yt-dlp-env/bin/python3';
+const EC2_COOKIES = '/home/ec2-user/cookies.txt';
+
+const YT_DLP = fs.existsSync(EC2_YT_DLP)
+    ? EC2_YT_DLP
+    : '/data/data/com.termux/files/usr/bin/yt-dlp';
+
+const PYTHON = fs.existsSync(EC2_PYTHON)
+    ? EC2_PYTHON
+    : '/data/data/com.termux/files/usr/bin/python';
+
+const COOKIE_CANDIDATES = [
+    '/storage/emulated/0/Download/cookies.txt',
+    '/sdcard/Download/cookies.txt'
+];
+
+const COOKIES = fs.existsSync(EC2_COOKIES)
+    ? EC2_COOKIES
+    : COOKIE_CANDIDATES.find(p => fs.existsSync(p));
+
+if (!YT_DLP) throw new Error('yt-dlp tidak ditemukan.');
+if (!COOKIES) throw new Error('cookies.txt tidak ditemukan.');
+
+const path = require('path');
+
+if (!YT_DLP) throw new Error('yt-dlp tidak ditemukan.');
+if (!COOKIES) throw new Error('cookies.txt tidak ditemukan.');
+
 
 async function searchAndDownload(query) {
     return new Promise((resolve) => {
-        const python = spawn('/home/ec2-user/yt-dlp-env/bin/python3', [
+        const python = spawn(PYTHON, [
             'music_cli.py',
             query
         ], {
@@ -101,14 +131,14 @@ async function searchAndDownloadVideo(query) {
             '%(title)s.%(ext)s'
         );
 
-        const ytDlp = '/home/ec2-user/yt-dlp-env/bin/yt-dlp';
+        const ytDlp = YT_DLP;
 
         const args = [
             'ytsearch1:' + query,
             '-f', 'bv*[ext=mp4][vcodec^=avc1][height<=720]+ba[ext=m4a][acodec^=mp4a]/b[ext=mp4][vcodec^=avc1][height<=720]/b[ext=mp4]',
             '--merge-output-format', 'mp4',
             '--no-playlist',
-            '--cookies', '/home/ec2-user/cookies.txt',
+            '--cookies', COOKIES,
             '--remote-components', 'ejs:github',
             '--max-filesize', '50M',
             '-o', outputTemplate,
