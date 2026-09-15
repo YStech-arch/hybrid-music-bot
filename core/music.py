@@ -6,9 +6,47 @@ import shutil
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-YT_DLP = "/home/ec2-user/yt-dlp-env/bin/yt-dlp"
-COOKIES = "/home/ec2-user/hybrid-music-bot/telegram_cookies.txt"
-DENO = "/home/ec2-user/.deno/bin/deno"
+# Auto-detect: EC2 atau Android/Termux
+EC2_YT_DLP = "/home/ec2-user/yt-dlp-env/bin/yt-dlp"
+EC2_COOKIES = "/home/ec2-user/hybrid-music-bot/telegram_cookies.txt"
+EC2_DENO = "/home/ec2-user/.deno/bin/deno"
+
+TERMUX_YT_DLP = shutil.which("yt-dlp")
+TERMUX_DENO = shutil.which("deno")
+
+COOKIE_CANDIDATES = [
+    "/storage/emulated/0/Download/cookies.txt",
+    "/sdcard/Download/cookies.txt",
+]
+
+if os.path.isfile(EC2_YT_DLP):
+    YT_DLP = EC2_YT_DLP
+else:
+    YT_DLP = TERMUX_YT_DLP
+
+if os.path.isfile(EC2_COOKIES):
+    COOKIES = EC2_COOKIES
+else:
+    COOKIES = next(
+        (p for p in COOKIE_CANDIDATES if os.path.isfile(p)),
+        None
+    )
+
+if os.path.isfile(EC2_DENO):
+    DENO = EC2_DENO
+else:
+    DENO = TERMUX_DENO
+
+if not YT_DLP:
+    raise RuntimeError("yt-dlp tidak ditemukan.")
+
+if not COOKIES:
+    raise RuntimeError(
+        "cookies.txt tidak ditemukan di EC2 maupun Android."
+    )
+
+if not DENO:
+    raise RuntimeError("Deno tidak ditemukan.")
 
 
 def search_and_download_audio(query, max_duration=600):
